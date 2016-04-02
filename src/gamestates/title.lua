@@ -51,21 +51,20 @@ function state:update(dt)
 end
 
 function state:draw()
+	-- background
+	love.graphics.draw(FLOOR_CANVAS, 0, 0)
+	love.graphics.draw(img_overlay, 0, 0)
+	--love.graphics.draw(img_stipple, 0, 0)
 
 	-- text
+	useful.bindBlack()
+	love.graphics.printf("Burn The Witch", WORLD_W*0.1, WORLD_H*0.1 + 1, WORLD_W*0.8, "center")
+	love.graphics.printf("@wilbefast", WORLD_W*0.1, WORLD_H*0.55 + 1, WORLD_W*0.8, "center")
+	love.graphics.printf("#lowrezjam", WORLD_W*0.1, WORLD_H*0.75 + 1, WORLD_W*0.8, "center")
 	love.graphics.setColor(215, 217, 160)
 	love.graphics.printf("Burn The Witch", WORLD_W*0.1, WORLD_H*0.1, WORLD_W*0.8, "center")
 	love.graphics.printf("@wilbefast", WORLD_W*0.1, WORLD_H*0.55, WORLD_W*0.8, "center")
 	love.graphics.printf("#lowrezjam", WORLD_W*0.1, WORLD_H*0.75, WORLD_W*0.8, "center")
-
-  -- cursor
-  if not HIDE_CURSOR then
-	  local x, y = love.mouse.getPosition( )
-	  x = (x - (WINDOW_W - VIEW_W)*0.5)/WINDOW_SCALE
-	  y = (y - (WINDOW_H - VIEW_H)*0.5)/WINDOW_SCALE
-	  --love.graphics.draw(cursor, x, y)
-	end
-
   useful.bindWhite()
 
 end

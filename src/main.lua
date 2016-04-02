@@ -18,6 +18,7 @@ GLOBAL VARIABLES
 
 WORLD_W, WORLD_H = 64, 64
 FLOOR_CANVAS = nil
+shake = 0
 
 --[[------------------------------------------------------------
 LOCAL VARIABLES
@@ -51,6 +52,7 @@ function love.load(arg)
   -- game-specific code
   Particle = require("gameobjects/Particle")
   Villager = require("gameobjects/Villager")
+  Ash = require("gameobjects/Ash")
   scaling = require("scaling")
   ingame = require("gamestates/ingame")
   title = require("gamestates/title")
@@ -81,6 +83,7 @@ function love.load(arg)
     love.graphics.newImage("assets/png/villager_2.png"),
     love.graphics.newImage("assets/png/villager_3.png")
   }
+  img_ash = love.graphics.newImage("assets/png/ash_pile.png")
   img_villager_burning = love.graphics.newImage("assets/png/villager_burning.png")
   img_shadow = love.graphics.newImage("assets/png/shadow.png")
   img_cursor = love.graphics.newImage("assets/png/cursor.png")
@@ -90,6 +93,7 @@ function love.load(arg)
     love.graphics.newImage("assets/png/cursor_fire_3.png")
   }
   img_cursor_fire = useful.shuffle(img_cursor_fire)
+  img_stipple = love.graphics.newImage("assets/png/stipple.png")
 
   -- initialise random
   math.randomseed(os.time())
@@ -107,9 +111,13 @@ function love.load(arg)
   -- window title
   love.window.setTitle("#BurnTheWitch")
 
-  -- canvas
+  -- canvases
   WORLD_CANVAS = love.graphics.newCanvas(64, 64)
-  
+  FLOOR_CANVAS = love.graphics.newCanvas(64, 64)
+  useful.pushCanvas(FLOOR_CANVAS)
+    love.graphics.draw(img_background, 0, 0)
+  useful.popCanvas()
+
   -- window icon
   --love.window.setIcon(love.image.newImageData("assets/png/icon.png"))
 
@@ -144,13 +152,47 @@ function love.keyreleased(key, uni)
 end
 
 function love.mousepressed(x, y, button)
+  local x, y = love.mouse.getPosition()
+  x, y = scaling.scaleMouse(x, y)
+
   cursor_lit = true
+  Particle.multiple({
+    x = x,
+    y = y,
+    speed = 12,
+    z_speed = 18,
+    z = 2,
+    red = 209,
+    green = 217,
+    blue = 0,
+    life = 0.3 + 0.3*math.random(),
+    gravity = 4
+  }, 4)
   GameState.mousepressed(x, y, button)
+
+  shake = shake + 0.5
 end
 
 function love.mousereleased(x, y, button)
+  local x, y = love.mouse.getPosition()
+  x, y = scaling.scaleMouse(x, y)
+
   cursor_lit = false
+  Particle.multiple({
+    x = x,
+    y = y,
+    speed = 3,
+    z_speed = 8,
+    z = 2,
+    red = 191,
+    green = 191,
+    blue = 189,
+    life = 0.5 + 0.6*math.random(),
+    gravity = 6
+  }, 6)
   GameState.mousereleased(x, y, button)
+
+  shake = shake + 0.3
 end
 
 function love.update(dt)
@@ -162,6 +204,11 @@ function love.update(dt)
     if cursor_i > #img_cursor_fire then
       cursor_i = 1
     end
+  end
+
+  shake = shake - 6*dt
+  if shake < 0 then
+    shake = 0
   end
 end
 
@@ -193,7 +240,9 @@ function love.draw()
     -- scaling
     love.graphics.scale(WINDOW_SCALE, WINDOW_SCALE)
     -- playable area is the centre sub-rect of the screen
-    love.graphics.translate((WINDOW_W - VIEW_W)*0.5/WINDOW_SCALE, (WINDOW_H - VIEW_H)*0.5/WINDOW_SCALE)
+    love.graphics.translate(
+      (WINDOW_W - VIEW_W)*0.5/WINDOW_SCALE + math.random()*shake, 
+      (WINDOW_H - VIEW_H)*0.5/WINDOW_SCALE + math.random()*shake)
     -- draw the canvas
     love.graphics.draw(WORLD_CANVAS, 0, 0)
   love.graphics.pop() -- pop offset
