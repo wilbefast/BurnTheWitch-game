@@ -17,6 +17,7 @@ GLOBAL VARIABLES
 --]]------------------------------------------------------------
 
 WORLD_W, WORLD_H = 64, 64
+FLOOR_CANVAS = nil
 
 --[[------------------------------------------------------------
 LOCAL VARIABLES
@@ -25,6 +26,10 @@ LOCAL VARIABLES
 local WORLD_CANVAS = nil
 local CAPTURE_SCREENSHOT = false
 local DEBUG = false
+
+local cursor_t = 0
+local cursor_i = 1
+local cursor_lit = false
 
 --[[------------------------------------------------------------
 LOVE CALLBACKS
@@ -44,6 +49,7 @@ function love.load(arg)
   log:setLength(21)
 
   -- game-specific code
+  Particle = require("gameobjects/Particle")
   Villager = require("gameobjects/Villager")
   scaling = require("scaling")
   ingame = require("gamestates/ingame")
@@ -69,8 +75,16 @@ function love.load(arg)
   love.graphics.setFont(font)
   -- ... png
   img_background = love.graphics.newImage("assets/png/background.png")
+  img_overlay = love.graphics.newImage("assets/png/overlay.png")
   img_villager = love.graphics.newImage("assets/png/villager.png")
   img_shadow = love.graphics.newImage("assets/png/shadow.png")
+  img_cursor = love.graphics.newImage("assets/png/cursor.png")
+  img_cursor_fire = {
+    love.graphics.newImage("assets/png/cursor_fire_1.png"),
+    love.graphics.newImage("assets/png/cursor_fire_2.png"),
+    love.graphics.newImage("assets/png/cursor_fire_3.png")
+  }
+  img_cursor_fire = useful.shuffle(img_cursor_fire)
 
   -- initialise random
   math.randomseed(os.time())
@@ -80,6 +94,7 @@ function love.load(arg)
   if love.system.getOS() == "Android" then
     HIDE_CURSOR = true
   end
+  cursor_t = math.random()
 
   -- save directory
   love.filesystem.setIdentity("BurnTheWitch")
@@ -98,7 +113,6 @@ function love.load(arg)
 
   -- play music
   --audio:play_music("music", 0.3)
-
 
   GameState.switch(title)
 end
@@ -125,18 +139,31 @@ function love.keyreleased(key, uni)
 end
 
 function love.mousepressed(x, y, button)
+  cursor_lit = true
   GameState.mousepressed(x, y, button)
 end
 
 function love.mousereleased(x, y, button)
+  cursor_lit = false
   GameState.mousereleased(x, y, button)
 end
 
 function love.update(dt)
 	GameState.update(dt)
+  cursor_t = cursor_t + 12*dt
+  if cursor_t > 1 then
+    cursor_t = cursor_t - 1
+    cursor_i = cursor_i + 1
+    if cursor_i > #img_cursor_fire then
+      cursor_i = 1
+    end
+  end
 end
 
 function love.draw()
+  local x, y = love.mouse.getPosition()
+  x, y = scaling.scaleMouse(x, y)
+
   love.graphics.setFont(font)
 
   useful.pushCanvas(WORLD_CANVAS)
@@ -146,6 +173,15 @@ function love.draw()
     useful.bindWhite()
     -- draw any other state specific stuff
     GameState.draw()
+    -- draw cursor
+    if not HIDE_CURSOR then
+      if cursor_lit then
+        love.graphics.draw(img_cursor, x, y + 2, 0, 1, -1)
+        love.graphics.draw(img_cursor_fire[cursor_i], x - 2, y - 5)
+      else
+        love.graphics.draw(img_cursor, x, y)
+      end
+    end
   useful.popCanvas()
 
   love.graphics.push()

@@ -26,11 +26,21 @@ function state:init()
 end
 
 function state:enter()
-	Villager(10, 10)
+	FLOOR_CANVAS = love.graphics.newCanvas(64, 64)
+	useful.pushCanvas(FLOOR_CANVAS)
+		love.graphics.draw(img_background, 0, 0)
+	useful.popCanvas()
+	for i = 1, 10 do
+		Villager({
+			x = 4 + math.random()*56, 
+			y = 4 + math.random()*56 
+		})
+	end
 end
 
 function state:leave()
 	GameObject.purgeAll()
+	FLOOR_CANVAS = nil
 end
 
 --[[------------------------------------------------------------
@@ -49,13 +59,15 @@ end
 function state:gamepadpressed(joystick, button)
 end
 
+local _view = { oblique = true }
 function state:update(dt)
-	GameObject.updateAll(dt)
+	GameObject.updateAll(dt, _view)
 end
 
 function state:draw()
-	love.graphics.draw(img_background, 0, 0)
+	love.graphics.draw(FLOOR_CANVAS, 0, 0)
 	GameObject.drawAll()
+	love.graphics.draw(img_overlay, 0, 0)
 end
 
 --[[------------------------------------------------------------
