@@ -22,7 +22,9 @@ WORLD_W, WORLD_H = 64, 64
 LOCAL VARIABLES
 --]]------------------------------------------------------------
 
+local WORLD_CANVAS = nil
 local CAPTURE_SCREENSHOT = false
+local DEBUG = false
 
 --[[------------------------------------------------------------
 LOVE CALLBACKS
@@ -34,6 +36,7 @@ function love.load(arg)
   Class = require("unrequited/Class")
   Vector = require("unrequited/Vector")
   GameState = require("unrequited/GameState")
+  GameObject = require("unrequited/GameObject")
   babysitter = require("unrequited/babysitter")
   useful = require("unrequited/useful")
   audio = require("unrequited/audio")
@@ -41,6 +44,7 @@ function love.load(arg)
   log:setLength(21)
 
   -- game-specific code
+  Villager = require("gameobjects/Villager")
   scaling = require("scaling")
   ingame = require("gamestates/ingame")
   title = require("gamestates/title")
@@ -61,7 +65,12 @@ function love.load(arg)
 
   -- resources
   -- ... fonts
-  love.graphics.setFont(love.graphics.newFont("assets/ttf/MunroSmall.ttf", 10))
+  font = love.graphics.newFont("assets/ttf/MunroSmall.ttf", 10)
+  love.graphics.setFont(font)
+  -- ... png
+  img_background = love.graphics.newImage("assets/png/background.png")
+  img_villager = love.graphics.newImage("assets/png/villager.png")
+  img_shadow = love.graphics.newImage("assets/png/shadow.png")
 
   -- initialise random
   math.randomseed(os.time())
@@ -77,6 +86,9 @@ function love.load(arg)
 
   -- window title
   love.window.setTitle("#BurnTheWitch")
+
+  -- canvas
+  WORLD_CANVAS = love.graphics.newCanvas(64, 64)
   
   -- window icon
   --love.window.setIcon(love.image.newImageData("assets/png/icon.png"))
@@ -101,6 +113,11 @@ end
 
 function love.keypressed(key, uni)
   GameState.keypressed(key, uni)
+  if key == "d" then
+    DEBUG = not DEBUG
+  elseif key == "x" then
+    CAPTURE_SCREENSHOT = not CAPTURE_SCREENSHOT
+  end
 end
 
 function love.keyreleased(key, uni)
@@ -120,27 +137,24 @@ function love.update(dt)
 end
 
 function love.draw()
-  love.graphics.push()
+  love.graphics.setFont(font)
 
-   -- scaling
-   love.graphics.scale(WINDOW_SCALE, WINDOW_SCALE)
-
-    -- playable area is the centre sub-rect of the screen
-    love.graphics.translate((WINDOW_W - VIEW_W)*0.5/WINDOW_SCALE, (WINDOW_H - VIEW_H)*0.5/WINDOW_SCALE)
-
-    -- background
-    love.graphics.setColor(18, 25, 25)
+  useful.pushCanvas(WORLD_CANVAS)
+    -- clear
+    love.graphics.setColor(64, 41, 41)
     love.graphics.rectangle("fill", 0, 0, WORLD_W, WORLD_H)
-
-    -- outline
-    love.graphics.setColor(255, 204, 127)
-    love.graphics.rectangle("line", 0, 0, WORLD_W, WORLD_H)
-
-    -- draw any other state specific stuff
-
+    useful.bindWhite()
     -- draw any other state specific stuff
     GameState.draw()
+  useful.popCanvas()
 
+  love.graphics.push()
+    -- scaling
+    love.graphics.scale(WINDOW_SCALE, WINDOW_SCALE)
+    -- playable area is the centre sub-rect of the screen
+    love.graphics.translate((WINDOW_W - VIEW_W)*0.5/WINDOW_SCALE, (WINDOW_H - VIEW_H)*0.5/WINDOW_SCALE)
+    -- draw the canvas
+    love.graphics.draw(WORLD_CANVAS, 0, 0)
   love.graphics.pop() -- pop offset
 
   -- capture GIF footage

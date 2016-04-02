@@ -13,53 +13,42 @@ Lesser General Public License for more details.
 --]]
 
 --[[------------------------------------------------------------
-INGAME GAMESTATE
---]]------------------------------------------------------------
-
-local state = GameState.new()
-
---[[------------------------------------------------------------
-Gamestate navigation
+Initialisation
 --]]--
 
-function state:init()
-end
+local Villager = Class
+{
+  type = GameObject.newType("Villager"),
 
-function state:enter()
-	Villager(10, 10)
-end
-
-function state:leave()
-	GameObject.purgeAll()
-end
+  init = function(self, x, y)
+    GameObject.init(self, x, y)  
+    self.z = 0
+    self.t = 0
+  end,
+}
+Villager:include(GameObject)
 
 --[[------------------------------------------------------------
-Callbacks
+Game loop
 --]]--
 
-function state:keypressed(key, uni)
-  if key == "escape" then
-  	GameState.switch(title)
-  end
+function Villager:update(dt)
+	self.t = self.t + 2*dt
+	if self.t > 1 then
+		self.t = self.t - 1
+	end
+	self.z = 2*math.abs(math.sin(self.t*math.pi*2))
 end
 
-function state:mousepressed(x, y)
-end
-
-function state:gamepadpressed(joystick, button)
-end
-
-function state:update(dt)
-	GameObject.updateAll(dt)
-end
-
-function state:draw()
-	love.graphics.draw(img_background, 0, 0)
-	GameObject.drawAll()
+function Villager:draw()
+	love.graphics.setColor(26, 16, 16)
+	love.graphics.draw(img_shadow, self.x, self.y, 0, 1, 1, 3, 2)
+	useful.bindWhite()
+	love.graphics.draw(img_villager, self.x, self.y - self.z, 0, 1, 1, 3, 5)
 end
 
 --[[------------------------------------------------------------
-EXPORT
---]]------------------------------------------------------------
+Export
+--]]--
 
-return state
+return Villager
