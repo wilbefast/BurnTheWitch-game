@@ -60,6 +60,12 @@ local Particle = Class
     end
     self.z = z
 
+    -- life
+    self.life = args.life or math.huge
+
+    -- gravity
+    self.gravity = args.gravity or -10
+
     -- colour
     self.red = args.red or 255
     self.green = args.green or 255
@@ -81,12 +87,17 @@ Game loop
 function Particle:update(dt)
 	GameObject.update(self, dt)
 
-	self.dz = self.dz - dt*10
+	self.dz = self.dz + dt*self.gravity
 	self.z = self.z + dt*self.dz
 	if self.z < 0 then
 		self.z = 0
 		self.purge = true
 	end
+
+    self.life = self.life - dt
+    if self.life < 0 then
+        self.purge = true
+    end
 end
 
 function Particle:draw()

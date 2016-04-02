@@ -25,7 +25,9 @@ local Villager = Class
   init = function(self, args)
     GameObject.init(self, args.x, args.y)  
     self.z = 0
+    self.heat = 0
     self.t = math.random()
+    self.sprite = img_villager[math.floor(math.random()*3) + 1]
   end,
 }
 Villager:include(GameObject)
@@ -35,9 +37,26 @@ Game loop
 --]]--
 
 function Villager:update(dt)
+	if self.heat > 0 then
+		self.heat = self.heat - 0.3*dt
+	else
+		self.heat = 0
+	end
+
 	-- on fire ?
 	if self.fire then
-
+		Particle({
+			x = self.x,
+			y = self.y,
+			speed = 3,
+			z_speed = 12,
+			z = 2,
+			red = 209,
+			green = 217,
+			blue = 0,
+			life = 0.1 + 0.7*math.random(),
+			gravity = 4
+		})
 	-- destination ?
 	elseif self.destination then
 		local dist = Vector.dist(self.x, self.y, self.destination.x, self.destination.y)
@@ -47,11 +66,12 @@ function Villager:update(dt)
 			self.t = 0
 			return
 		end
+		local speed = self.speed*(1 + self.heat)
 		local dx, dy = (self.destination.x - self.x)/dist, (self.destination.y - self.y)/dist
-		self.x, self.y = self.x + dx*dt*self.speed, self.y + dy*dt*self.speed
+		self.x, self.y = self.x + dx*dt*speed, self.y + dy*dt*speed
 
 		-- jump around
-		self.t = self.t + 2*dt
+		self.t = self.t + 2*dt*(1 + self.heat)
 		if self.t > 1 then
 			self.t = self.t - 1
 			Particle.multiple({
@@ -81,11 +101,11 @@ function Villager:update(dt)
 		self.z = 3*math.abs(math.sin(self.t*math.pi*2))
 	else
 		-- wait for a bit
-		self.t = self.t + dt*math.random()
+		self.t = self.t + dt*math.random()*(1 + 2*self.heat)
 		if self.t > 1 then
 			self.destination = {
-				x = 10 + math.random()*44, 
-				y = 10 + math.random()*44 
+				x = 4 + math.random()*56,
+				y = 4 + math.random()*56
 			}
 		end
 	end
@@ -95,7 +115,11 @@ function Villager:draw()
 	love.graphics.setColor(26, 16, 16)
 	love.graphics.draw(img_shadow, self.x, self.y, 0, 1, 1, 3, 2)
 	useful.bindWhite()
-	love.graphics.draw(img_villager, self.x, self.y - self.z, 0, 1, 1, 3, 5)
+	if self.fire then
+		love.graphics.draw(img_villager_burning, self.x, self.y - self.z, 0, 1, 1, 3, 5)
+	else
+		love.graphics.draw(self.sprite, self.x, self.y - self.z, 0, 1, 1, 3, 5)
+	end
 end
 
 function Villager:eventCollision(other, dt)

@@ -66,6 +66,19 @@ function state:update(dt)
 	if cursor_lit then
 	  local x, y = love.mouse.getPosition()
 		x, y = scaling.scaleMouse(x, y)
+
+		-- set fire to dudes
+		local villager, dist2 = GameObject.getNearestOfType("Villager", x, y, function(villager) 
+			return not villager.fire 
+		end)
+		if villager and dist2 < 32 then
+			villager.heat = villager.heat + 4*dt
+			if villager.heat > 1 then
+				villager.fire = true
+			end
+		end
+
+		-- leave traces
 		Particle.multiple({
 			x = x,
 			y = y,

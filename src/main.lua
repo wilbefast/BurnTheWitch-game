@@ -76,7 +76,12 @@ function love.load(arg)
   -- ... png
   img_background = love.graphics.newImage("assets/png/background.png")
   img_overlay = love.graphics.newImage("assets/png/overlay.png")
-  img_villager = love.graphics.newImage("assets/png/villager.png")
+  img_villager = {
+    love.graphics.newImage("assets/png/villager_1.png"),
+    love.graphics.newImage("assets/png/villager_2.png"),
+    love.graphics.newImage("assets/png/villager_3.png")
+  }
+  img_villager_burning = love.graphics.newImage("assets/png/villager_burning.png")
   img_shadow = love.graphics.newImage("assets/png/shadow.png")
   img_cursor = love.graphics.newImage("assets/png/cursor.png")
   img_cursor_fire = {
