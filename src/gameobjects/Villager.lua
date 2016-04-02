@@ -84,8 +84,8 @@ function Villager:update(dt)
 		self.t = self.t + dt*math.random()
 		if self.t > 1 then
 			self.destination = {
-				x = 4 + math.random()*56,
-				y = 4 + math.random()*56
+				x = 10 + math.random()*44, 
+				y = 10 + math.random()*44 
 			}
 		end
 	end

@@ -29,7 +29,7 @@ local DEBUG = false
 
 local cursor_t = 0
 local cursor_i = 1
-local cursor_lit = false
+cursor_lit = false
 
 --[[------------------------------------------------------------
 LOVE CALLBACKS
@@ -177,7 +177,7 @@ function love.draw()
     if not HIDE_CURSOR then
       if cursor_lit then
         love.graphics.draw(img_cursor, x, y + 2, 0, 1, -1)
-        love.graphics.draw(img_cursor_fire[cursor_i], x - 2, y - 5)
+        love.graphics.draw(img_cursor_fire[cursor_i], x - 3, y - 5)
       else
         love.graphics.draw(img_cursor, x, y)
       end

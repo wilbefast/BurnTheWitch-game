@@ -32,8 +32,8 @@ function state:enter()
 	useful.popCanvas()
 	for i = 1, 10 do
 		Villager({
-			x = 4 + math.random()*56, 
-			y = 4 + math.random()*56 
+			x = 10 + math.random()*44, 
+			y = 10 + math.random()*44 
 		})
 	end
 end
@@ -62,12 +62,36 @@ end
 local _view = { oblique = true }
 function state:update(dt)
 	GameObject.updateAll(dt, _view)
+
+	if cursor_lit then
+	  local x, y = love.mouse.getPosition()
+		x, y = scaling.scaleMouse(x, y)
+		Particle.multiple({
+			x = x,
+			y = y,
+			speed = 8,
+			z_speed = 2,
+			red = 209,
+			green = 217,
+			blue = 0
+		}, 2)
+	end
 end
 
 function state:draw()
 	love.graphics.draw(FLOOR_CANVAS, 0, 0)
 	GameObject.drawAll()
 	love.graphics.draw(img_overlay, 0, 0)
+
+	if cursor_lit and math.random() > 0.5 then
+	  local x, y = love.mouse.getPosition()
+  	x, y = scaling.scaleMouse(x, y)
+		useful.pushCanvas(FLOOR_CANVAS)
+			love.graphics.setColor(32, 16, 16)
+			love.graphics.points(x, y, x + 2*math.random() - 2*math.random(), y + 2*math.random() - 2*math.random())
+			useful.bindWhite()	
+		useful.popCanvas()
+	end
 end
 
 --[[------------------------------------------------------------
