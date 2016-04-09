@@ -39,6 +39,7 @@ Game loop
 
 function Villager:poof()
 	if self.t > 1 then
+		audio:play_sound("jump", 0.3)
 		self.t = self.t - 1
 		Particle.multiple({
 			x = self.x,
@@ -95,6 +96,7 @@ function Villager:update(dt)
 			self.life = self.life - dt*0.5
 			if self.life < 0 then
 				self.purge = true
+				audio:play_sound("die", 0.2)
 				Ash({
 					x = self.x, 
 					y = self.y

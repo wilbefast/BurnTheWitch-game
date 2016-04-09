@@ -125,7 +125,16 @@ function love.load(arg)
   love.graphics.setBackgroundColor(0, 0, 0)
 
   -- play music
-  --audio:play_music("music", 0.3)
+  audio:load_music("BurnTheWitch")
+  audio:play_music("BurnTheWitch", 1)
+
+  -- sound
+  audio:load_sound("die", 1, 3)
+  audio:load_sound("extinguish", 0.5, 2)
+  audio:load_sound("ignite", 0.9, 2)
+  audio:load_sound("immolate", 1, 3)
+  audio:load_sound("jump", 1, 6)
+  audio:load_sound("speak", 1, 2)
 
   GameState.switch(title)
 end
@@ -156,6 +165,7 @@ function love.mousepressed(x, y, button)
   x, y = scaling.scaleMouse(x, y)
 
   cursor_lit = true
+  audio:play_sound("ignite", 0.3)
   Particle.multiple({
     x = x,
     y = y,
@@ -174,6 +184,7 @@ function love.mousepressed(x, y, button)
 end
 
 function love.mousereleased(x, y, button)
+  audio:play_sound("extinguish", 0.3)
   local x, y = love.mouse.getPosition()
   x, y = scaling.scaleMouse(x, y)
 

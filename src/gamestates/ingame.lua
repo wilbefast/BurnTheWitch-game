@@ -79,6 +79,7 @@ function state:update(dt)
 		if villager and dist2 < 24 then
 			villager.heat = villager.heat + 4*dt
 			if villager.heat > 1 then
+				audio:play_sound("immolate", 0.1)
 				villager.fire = true
 				Particle.multiple({
 					x = villager.x,
