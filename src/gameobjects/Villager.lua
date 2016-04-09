@@ -34,6 +34,49 @@ local Villager = Class
 Villager:include(GameObject)
 
 --[[------------------------------------------------------------
+Burn
+--]]--
+
+function Villager:burn(amount)
+	self.heat = self.heat + amount
+	if self.heat > 1 then
+		audio:play_sound("immolate", 0.1)
+		self.fire = true
+		Particle.multiple({
+			x = self.x,
+			y = self.y,
+			speed = 15,
+			z_speed = 18,
+			z = 2 + self.z,
+			red = 209,
+			green = 217,
+			blue = 0,
+			life = 0.5 + 0.3*math.random(),
+			gravity = 4
+		}, 10)
+		self.z = 0
+		shake = shake + 2
+	end
+	self:stopSpeaking()
+end
+
+--[[------------------------------------------------------------
+Speach
+--]]--
+
+function Villager:startSpeaking()
+	self.destination = nil
+	self.dx, self.dy = 0, 0
+	self.z = 0
+	audio:play_sound("speak", 0.3)
+	self.speach = true
+end
+
+function Villager:stopSpeaking()
+	self.speach = false
+end
+
+--[[------------------------------------------------------------
 Game loop
 --]]--
 
@@ -167,7 +210,7 @@ function Villager:update(dt)
 		self.t = self.t + 2*dt*(1 + self.heat)
 		self.z = 3*math.abs(math.sin(self.t*math.pi*2))
 		self:poof()
-	else
+	elseif not self.speach then
 		-- wait for a bit
 		self.t = self.t + dt*math.random()*(1 + 2*self.heat)
 		if self.t > 1 then
@@ -187,6 +230,10 @@ function Villager:draw()
 		love.graphics.draw(img_villager_burning, self.x, self.y - self.z, 0, 1, 1, 3, 5)
 	else
 		love.graphics.draw(self.sprite, self.x, self.y - self.z, 0, 1, 1, 3, 5)
+	end
+
+	if self.speach then
+		love.graphics.draw(self.sprite, self.x, self.y - self.z, 0, 2, 2, 3, 5)
 	end
 end
 

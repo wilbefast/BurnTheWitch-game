@@ -135,6 +135,8 @@ function love.load(arg)
   audio:load_sound("immolate", 1, 3)
   audio:load_sound("jump", 1, 6)
   audio:load_sound("speak", 1, 2)
+  audio:load_sound("start", 1, 1)
+  audio:load_sound("win", 1, 1)
 
   GameState.switch(title)
 end

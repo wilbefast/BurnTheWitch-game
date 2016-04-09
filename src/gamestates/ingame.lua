@@ -16,6 +16,12 @@ Lesser General Public License for more details.
 INGAME GAMESTATE
 --]]------------------------------------------------------------
 
+local _villager_pick_t
+local _current_villager
+local _all_villagers
+
+local _is_victory
+
 local state = GameState.new()
 
 --[[------------------------------------------------------------
@@ -26,12 +32,20 @@ function state:init()
 end
 
 function state:enter()
+	_villager_pick_t = -4
+	_current_villager = nil
+	_all_villagers = {}
+	
+	_is_victory = false
+
+	audio:play_sound("start")
+
 	for i = 1, 10 do
 		if i%2 == 0 then
-			Villager({
+			table.insert(_all_villagers, Villager({
 				x = WORLD_W + 5, 
 				y = WORLD_H*math.random() 
-			})
+			}))
 		else
 			Villager({
 				x = -5, 
@@ -42,6 +56,7 @@ function state:enter()
 end
 
 function state:leave()
+	_all_villagers = nil
 	GameObject.purgeAll()
 end
 
@@ -68,6 +83,36 @@ local _view = { oblique = true }
 function state:update(dt)
 	GameObject.updateAll(dt, _view)
 
+	if not _is_victory then
+		_villager_pick_t = _villager_pick_t + dt
+		if _villager_pick_t > 3 then
+
+
+			-- disable the old guy?
+			if _current_villager then
+				_current_villager:stopSpeaking()
+				_current_villager = nil
+				_villager_pick_t = 1.5
+			-- pick a new guy?
+			else
+				local tries = #_all_villagers
+				 
+				repeat
+					_current_villager = _all_villagers[1]
+					table.remove(_all_villagers, 1)
+					table.insert(_all_villagers, _current_villager)
+					tries = tries - 1
+				until (tries <= 0) or (not _current_villager.purge and not _current_villager.fire)
+
+				-- success ?
+				if tries > 0 then
+					_villager_pick_t = 0
+					_current_villager:startSpeaking()
+				end
+			end
+		end
+	end
+
 	if cursor_lit then
 	  local x, y = love.mouse.getPosition()
 		x, y = scaling.scaleMouse(x, y)
@@ -77,25 +122,7 @@ function state:update(dt)
 			return not villager.fire 
 		end)
 		if villager and dist2 < 24 then
-			villager.heat = villager.heat + 4*dt
-			if villager.heat > 1 then
-				audio:play_sound("immolate", 0.1)
-				villager.fire = true
-				Particle.multiple({
-					x = villager.x,
-					y = villager.y,
-					speed = 15,
-					z_speed = 18,
-					z = 2 + villager.z,
-					red = 209,
-					green = 217,
-					blue = 0,
-					life = 0.5 + 0.3*math.random(),
-					gravity = 4
-				}, 10)
-				villager.z = 0
-				shake = shake + 2
-			end
+			villager:burn(4*dt)
 		end
 
 		-- flaming embers
@@ -127,6 +154,12 @@ function state:update(dt)
 				gravity = 6
 			})
 		end
+	end
+
+	if not _is_victory and GameObject.countOfType("Villager") <= 0 then
+		_is_victory = true
+		audio:play_sound("win")
+		shake = shake + 1
 	end
 end
 
