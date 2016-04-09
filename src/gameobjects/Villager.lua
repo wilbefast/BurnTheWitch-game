@@ -224,16 +224,18 @@ end
 
 function Villager:draw()
 	love.graphics.setColor(26, 16, 16)
-	love.graphics.draw(img_shadow, self.x, self.y, 0, 1, 1, 3, 2)
+	if self.speach then
+		love.graphics.draw(img_shadow, self.x, self.y, 0, 2, 2, 3, 2)
+	else
+		love.graphics.draw(img_shadow, self.x, self.y, 0, 1, 1, 3, 2)
+	end
 	useful.bindWhite()
 	if self.fire then
 		love.graphics.draw(img_villager_burning, self.x, self.y - self.z, 0, 1, 1, 3, 5)
+	elseif self.speach then
+		love.graphics.draw(self.sprite, self.x, self.y - self.z, 0, 2, 2, 3, 5)
 	else
 		love.graphics.draw(self.sprite, self.x, self.y - self.z, 0, 1, 1, 3, 5)
-	end
-
-	if self.speach then
-		love.graphics.draw(self.sprite, self.x, self.y - self.z, 0, 2, 2, 3, 5)
 	end
 end
 

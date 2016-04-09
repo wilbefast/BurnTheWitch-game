@@ -106,8 +106,19 @@ function state:update(dt)
 
 				-- success ?
 				if tries > 0 then
-					_villager_pick_t = 0
-					_current_villager:startSpeaking()
+					
+					_bubble_x = useful.clamp(_current_villager.x, 16, 48)
+
+					if _current_villager.y < 32 then
+						_bubble_y = _current_villager.y + 8
+					else
+						_bubble_y = _current_villager.y - 24
+					end
+
+					if _current_villager then
+						_villager_pick_t = 0
+						_current_villager:startSpeaking()
+					end
 				end
 			end
 		end
@@ -166,6 +177,14 @@ end
 function state:draw()
 	love.graphics.draw(FLOOR_CANVAS, 0, 0)
 	GameObject.drawAll()
+
+	if _current_villager and _current_villager.speach then
+		love.graphics.draw(img_bubble, _bubble_x - 8, _bubble_y - 8)
+
+		local dx, dy = Vector.normalise(_current_villager.x - _bubble_x, _current_villager.y - _bubble_y)
+		local angle = math.atan2(dy, dx) + math.pi
+		love.graphics.draw(img_bubble_attach, _bubble_x + dx*11, _bubble_y + dy*11, angle, 1, 1, 0, 4)
+	end
 	love.graphics.draw(img_overlay, 0, 0)
 
 	if cursor_lit and math.random() > 0.5 then
