@@ -58,11 +58,11 @@ function state:draw()
 
 	-- text
 	useful.bindBlack()
-	love.graphics.printf("Burn The Witch", WORLD_W*0.1, WORLD_H*0.1 + 1, WORLD_W*0.8, "center")
+	love.graphics.printf("# Burn The Witch", WORLD_W*0.1, WORLD_H*0.1 + 1, WORLD_W*0.8, "center")
 	love.graphics.printf("@wilbefast", WORLD_W*0.1, WORLD_H*0.55 + 1, WORLD_W*0.8, "center")
 	love.graphics.printf("#lowrezjam", WORLD_W*0.1, WORLD_H*0.75 + 1, WORLD_W*0.8, "center")
 	love.graphics.setColor(215, 217, 160)
-	love.graphics.printf("Burn The Witch", WORLD_W*0.1, WORLD_H*0.1, WORLD_W*0.8, "center")
+	love.graphics.printf("# Burn The Witch", WORLD_W*0.1, WORLD_H*0.1, WORLD_W*0.8, "center")
 	love.graphics.printf("@wilbefast", WORLD_W*0.1, WORLD_H*0.55, WORLD_W*0.8, "center")
 	love.graphics.printf("#lowrezjam", WORLD_W*0.1, WORLD_H*0.75, WORLD_W*0.8, "center")
   useful.bindWhite()

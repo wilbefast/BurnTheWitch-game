@@ -20,6 +20,8 @@ local _villager_pick_t
 local _current_villager
 local _all_villagers
 
+local _current_symbol
+
 local _is_victory
 
 local state = GameState.new()
@@ -105,8 +107,9 @@ function state:update(dt)
 				until (tries <= 0) or (not _current_villager.purge and not _current_villager.fire)
 
 				-- success ?
-				if tries > 0 then
-					
+				if not _current_villager.purge and not _current_villager.fire then
+					_current_symbol = useful.randIn(img_symbol)
+
 					_bubble_x = useful.clamp(_current_villager.x, 16, 48)
 
 					if _current_villager.y < 32 then
@@ -184,6 +187,8 @@ function state:draw()
 		local dx, dy = Vector.normalise(_current_villager.x - _bubble_x, _current_villager.y - _bubble_y)
 		local angle = math.atan2(dy, dx) + math.pi
 		love.graphics.draw(img_bubble_attach, _bubble_x + dx*11, _bubble_y + dy*11, angle, 1, 1, 0, 4)
+		
+		love.graphics.draw(_current_symbol, _bubble_x - 6, _bubble_y - 6)
 	end
 	love.graphics.draw(img_overlay, 0, 0)
 

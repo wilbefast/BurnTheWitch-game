@@ -96,6 +96,14 @@ function love.load(arg)
   img_stipple = love.graphics.newImage("assets/png/stipple.png")
   img_bubble = love.graphics.newImage("assets/png/bubble.png")
   img_bubble_attach = love.graphics.newImage("assets/png/bubble_attach.png")
+  img_symbol = {}
+  local img_symbol_i = 1
+  local img_symbol_filename = "assets/png/symbol_1.png"
+  while love.filesystem.exists(img_symbol_filename) do
+    table.insert(img_symbol, love.graphics.newImage("assets/png/symbol_1.png"))
+    img_symbol_i = img_symbol_i + 1
+    img_symbol_filename = "assets/png/symbol_" .. tostring(img_symbol_i) .. ".png"
+  end
 
   -- initialise random
   math.randomseed(os.time())
