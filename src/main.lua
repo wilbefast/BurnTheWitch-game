@@ -100,7 +100,7 @@ function love.load(arg)
   local img_symbol_i = 1
   local img_symbol_filename = "assets/png/symbol_1.png"
   while love.filesystem.exists(img_symbol_filename) do
-    table.insert(img_symbol, love.graphics.newImage("assets/png/symbol_1.png"))
+    table.insert(img_symbol, love.graphics.newImage(img_symbol_filename))
     img_symbol_i = img_symbol_i + 1
     img_symbol_filename = "assets/png/symbol_" .. tostring(img_symbol_i) .. ".png"
   end
