@@ -49,10 +49,10 @@ function state:enter()
 				y = WORLD_H*math.random() 
 			}))
 		else
-			Villager({
+			table.insert(_all_villagers, Villager({
 				x = -5, 
 				y = WORLD_H*math.random() 
-			})
+			}))
 		end
 	end
 end
