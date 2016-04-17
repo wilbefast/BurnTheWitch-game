@@ -54,7 +54,6 @@ function state:draw()
 	-- background
 	love.graphics.draw(FLOOR_CANVAS, 0, 0)
 	love.graphics.draw(img_overlay, 0, 0)
-	--love.graphics.draw(img_stipple, 0, 0)
 
 	-- text
 	useful.bindBlack()

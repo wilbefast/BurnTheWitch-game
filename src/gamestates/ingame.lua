@@ -203,8 +203,6 @@ function state:draw()
 	end
 
 	if GameObject.countOfType("Villager") <= 0 then
-	  --love.graphics.draw(img_stipple, 0, 0)
-
 		-- text
 		useful.bindBlack()
 		love.graphics.printf("Well done! Now there are no more witches.", 

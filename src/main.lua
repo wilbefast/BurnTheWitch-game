@@ -93,7 +93,6 @@ function love.load(arg)
     love.graphics.newImage("assets/png/cursor_fire_3.png")
   }
   img_cursor_fire = useful.shuffle(img_cursor_fire)
-  img_stipple = love.graphics.newImage("assets/png/stipple.png")
   img_bubble = love.graphics.newImage("assets/png/bubble.png")
   img_bubble_attach = love.graphics.newImage("assets/png/bubble_attach.png")
   img_symbol = {}
